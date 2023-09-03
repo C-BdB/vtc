@@ -1,0 +1,19 @@
+openapi: 3.0.0
+info:
+  title: fee
+  version: '1.0'
+  contact:
+    name: CBdB
+  description: Compute the fee of a Uber ride
+servers:
+  - url: 'https://ApiDefinitionUrl.token'
+paths:
+  /health:
+    get:
+      summary: Health
+      tags: []
+      responses:
+        '200':
+          description: OK
+      operationId: get-health
+      description: Check health

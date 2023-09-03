@@ -1,0 +1,6 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+        "AZURE_STORAGE_CONNECTION":"UseDevelopmentStorage=true"
+    }
+}
