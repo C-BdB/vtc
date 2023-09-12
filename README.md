@@ -10,8 +10,36 @@ This project is aimed at predicting the fee of a Uber ride using machine learnin
 
 ## 2. App
 
-The App is designed as following: 
-![image](https://github.com/C-BdB/vtc/assets/137887330/fe3eab85-188c-48d6-bce5-32455202e6db)
+The App is designed as following:
+
+![image](https://github.com/C-BdB/vtc/assets/137887330/f49d18b3-22f5-4bbb-afaa-d457abd8945f)
+
+
+#### Stage 1: Trigger
+
+- **Description**: This stage serves as the initial trigger point for the workflow.
+- **Trigger Event**: It can be initiated by an event such as a user's action (e.g., requesting a ride) or through a scheduled job.
+
+#### Stage 2: Put in Queue
+
+- **Description**: After the trigger event, the workflow places the task or job into a queue.
+- **Purpose**: Queues are used for managing asynchronous tasks and ensuring efficient processing.
+
+#### Stage 3: Trigger Second App
+
+- **Description**: This stage trigger the second application that makes the real process.
+
+#### Stage 4: Call External API to Get Meteo Data (Not developed yet)
+
+- **Description**: In this stage, the workflow makes an HTTP request to an external API to retrieve meteorological (weather) data.
+
+#### Stage 5: Read Model into Data Lake
+
+- **Description**: This stage reads the model into the data lake.
+
+#### Stage 6: Send Callback
+
+- **Description**: The workflow concludes by sending a callback or notification.
 
 ### Azure App
 - The `app` directory includes an Azure web application designed to make predictions based on the trained machine learning model.
