@@ -12,8 +12,7 @@ This project is aimed at predicting the fee of a Uber ride using machine learnin
 
 The App is designed as following:
 
-![image](https://github.com/C-BdB/vtc/assets/137887330/f49d18b3-22f5-4bbb-afaa-d457abd8945f)
-
+![image](https://github.com/C-BdB/vtc/assets/137887330/c25dcdb1-13b2-4f17-82e6-10324fb13d17)
 
 #### Stage 1: Trigger
 
