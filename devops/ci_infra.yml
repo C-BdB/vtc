@@ -1,0 +1,43 @@
+name: infra_$(SourceBranchName)_$(Build.Reason)_$(Date:yyyyMMdd).$(Rev:r)
+
+variables:
+  - name: FONCTION_NAME
+    value: fee
+
+trigger:
+  branches:
+    include:
+    - main
+    - develop
+    - release/*
+  paths:
+    include: 
+    - 'infra/**'
+    exclude:
+    - 'devops/**'
+    - 'app/**'
+
+jobs:
+- job: BuildInfrastructure
+  displayName: 'Build Infrastructure'
+  pool:
+    vmImage: ubuntu-latest
+
+  steps:
+    - checkout: self
+      submodules: recursive
+      displayName: 'get source from git'
+
+    - task: CopyFiles@2
+      displayName: 'Generate artifact for Terraform'
+      inputs:
+        contents: 'infra/**'
+        targetFolder: $(Build.ArtifactStagingDirectory)
+
+    # Publish artefacrt
+    - task: PublishBuildArtifacts@1
+      displayName: PublishArtifact
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'infra-$(FONCTION_NAME)'
+        publishLocation: 'Container'

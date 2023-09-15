@@ -1,0 +1,10 @@
+{
+    "callback_url": "https://callback",
+    "hour": 17,
+    "rain_level": 1,
+    "temperature": 10,
+    "distance": 3.4,
+    "day_of_week_encoded": 3,
+    "arrondissement_start": 12,
+    "arrondissement_end":1
+}
