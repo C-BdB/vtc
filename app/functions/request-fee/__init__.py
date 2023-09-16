@@ -1,13 +1,42 @@
 import azure.functions as func
 import logging
 import os
-from azure.storage.queue import QueueClient
+import json
+from services.message_service import ReqMessage
 
-CONNECT_STRING ="AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
-def main(req: func.HttpRequest) -> str:
-    message = req.get_json()
-    logging.info(f"The message is {message}")
-    queue_client = QueueClient.from_connection_string(
-        conn_str=CONNECT_STRING, queue_name="fee")
-    queue_client.send_message(message)
-    return message
+
+# Global variables
+QUEUE_CONNECT_STRING = os.environ.get("QUEUE_CONNECT_STRING")
+
+
+def main(req: func.HttpRequest, context: func.Context) -> str:
+    try:
+        req_message = ReqMessage(req=req, context=context, queue_connect_string=QUEUE_CONNECT_STRING)
+        req_message.sanitize()
+        req_message.post_in_queue()
+
+        # Prepare synchronous response
+        body = {
+            "status": "OK",
+            "request": context.invocation_id
+        }
+        headers = {"Content-Type": "application/json"}
+        status_code = 200
+
+    except Exception as e:
+        body = {
+            "status": "failed",
+            "sub_status": str(e),
+            "request": context.invocation_id
+        }
+        headers = {"Content-Type": "application/json"}
+        status_code = 500
+        logging.info(f"Exception is: {e}")
+
+    finally:
+        # Return Response
+        return func.HttpResponse(
+            status_code=status_code,
+            body=json.dumps(body),
+            headers=headers
+        )

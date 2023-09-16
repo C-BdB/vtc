@@ -1,0 +1,12 @@
+{
+    "callback_url": "https://webhook.site/c1f32dcb-9232-41d6-9435-b042adf87917",
+    "data": {
+        "hour": 17,
+        "rain_level": 1,
+        "temperature": 10,
+        "distance": 3.4,
+        "day_of_week": "Monday",
+        "arrondissement_start": 12,
+        "arrondissement_end": 1
+    }
+}
