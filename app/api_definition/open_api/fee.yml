@@ -6,7 +6,7 @@ info:
     name: CBdB
   description: Compute the fee of a Uber ride
 servers:
-  - url: 'https://ApiDefinitionUrl.token'
+  - url: 'http://localhost:7071/api/'
 paths:
   /health:
     get:
@@ -17,3 +17,70 @@ paths:
           description: OK
       operationId: get-health
       description: Check health
+  /request-fee:
+    post:
+      summary: ''
+      operationId: post-request-fee
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  example-1:
+                    fee: 7.7471000000000005
+                properties:
+                  fee:
+                    type: number
+                required:
+                  - fee
+      description: Predict the fee of a Uber ride
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                example-1:
+                  callback_url: 'https://webhook.site/c1f32dcb-9232-41d6-9435-b042adf87917'
+                  data:
+                    hour: 17
+                    rain_level: 1
+                    temperature: 10
+                    distance: 3.4
+                    day_of_week: Monday
+                    arrondissement_start: 12
+                    arrondissement_end: 1
+              properties:
+                callback_url:
+                  type: string
+                data:
+                  type: object
+                  required:
+                    - hour
+                    - rain_level
+                    - temperature
+                    - distance
+                    - day_of_week
+                    - arrondissement_start
+                    - arrondissement_end
+                  properties:
+                    hour:
+                      type: integer
+                    rain_level:
+                      type: integer
+                    temperature:
+                      type: integer
+                    distance:
+                      type: number
+                    day_of_week:
+                      type: string
+                    arrondissement_start:
+                      type: integer
+                    arrondissement_end:
+                      type: integer
+              required:
+                - callback_url
+                - data
