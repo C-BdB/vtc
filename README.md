@@ -1,14 +1,20 @@
 # vtc - Uber Ride Fee Prediction
 
-This project is aimed at predicting the fee of a Uber ride using machine learning techniques. It is organized into the following sections:
+This project is aimed at predicting the fee of a Uber ride using machine learning techniques. As a classical project, it contains:
+- [training/exploration](#training) repo for **ML and datascience**
+- [app](#app) repo with **functions to deploy the ML model** and associated **unit tests**. The code of this repo is formatted by a **linter**.
+- [devops](#devops) repo for potential **CI/CD**
+- [infra](#infra) repo to show an example of **infrastructure as a code** (IAC)
 
-## 1. Training
+[Get started](#start)!
+
+## 1. Training<a name="training"></a>
 
 ### Repository
 - The `training` directory contains a Jupyter Notebook (`model_training.ipynb`) where the machine learning model is developed and trained.
 - To reproduce the model or experiment with different data, navigate to the `training` directory and follow the instructions in the notebook.
 
-## 2. App
+## 2. App<a name="app"></a>
 
 The App is designed as following:
 
@@ -44,19 +50,19 @@ The App is designed as following:
 - The `app` directory includes an Azure web application designed to make predictions based on the trained machine learning model.
 - You can deploy this app on Azure to provide a user-friendly interface for predicting Uber ride fees.
 
-## 3. DevOps
+## 3. DevOps<a name="devops"></a>
 
 ### Continuous Integration and Continuous Deployment (CI/CD)
 - The `devops` directory contains the necessary configuration and scripts for implementing CI/CD for the Azure app.
 - We use Azure DevOps to automate the build and deployment processes.
 
-## 4. Infrastructure
+## 4. Infrastructure<a name="infra"></a>
 
 ### Infrastructure as Code (IaC)
 - The `infra` directory holds the infrastructure as code (IaC) scripts that define the resources needed to run the Azure app.
 - These scripts can be used with tools like Terraform to provision and manage the required infrastructure.
 
-## Getting Started
+## Getting Started<a name="start"></a>
 
 Follow these steps to get started with the project:
 
