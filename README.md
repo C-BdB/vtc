@@ -60,7 +60,15 @@ The App is designed as following:
 
 Follow these steps to get started with the project:
 
-1. Clone this repository to your local machine:
+1. Clone this repository to your local machine, preferrably on VSCode:
 
    ```bash
    git clone https://github.com/C-BdB/vtc.git
+
+2. Install dependancies of the requirements.txt
+3. Install Azurite Extension on VSCode, Azure Functions Core tools
+4. Use Postman to send requests (see the body of a typical request in the app/api_definition repository
+5. Prepare a webhook to receive the asynchronous response
+6. Run the code
+   ```bash
+   func host start

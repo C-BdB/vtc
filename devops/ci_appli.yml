@@ -1,0 +1,159 @@
+name: $(SourceBranchName)_$(Build.Reason)_$(Date:yyyyMMdd)$(Rev:.r)
+
+variables:
+  - name: FUNCTION_NAME
+    value: fee
+  - name: FUNCTION_PATH
+    value: App/azure-functions/python/
+  - name: DEFINITION_PATH
+    value: /App/ApiDefinition/python/
+
+
+trigger:
+  branches:
+    include:
+    - develop
+    - release/*
+  paths:
+    include:
+    - 'app/**'
+    exclude:
+    - 'devops/**'
+    - 'infra/**'
+
+jobs:
+- job: ValidateFunction
+  displayName: 'Validate Function'
+  condition: eq(variables['Build.Reason'], 'PullRequest')
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  steps:
+    - checkout: self
+      displayName: 'Get source from git'
+
+    # Python version
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.9'
+
+    # Install requirements
+    - script: |
+        cd ./$(FUNCTION_PATH)
+        pip install -r requirements-dev.txt
+        pip install -r requirements.txt
+      displayName: 'Install tools Python'
+
+    # Linter
+    - script: |
+        cd ./$(FUNCTION_PATH)
+        flake8 . --output-file=flake8.txt
+        flake8 .
+      displayName: 'Run lint Python'
+
+    # Unit tests
+    - script: |
+        cd ./$(FUNCTION_PATH)
+        pytest --doctest-modules --junitxml=junit/test-results.xml --cov=. --cov-report=xml
+      displayName: 'pytest'  
+    
+    - task: PublishTestResults@2
+      inputs:
+        testResultsFiles: '**/test-results.xml'
+        testRunTitle: 'Publish test Python'
+
+
+- job: BuildFunction
+  displayName: 'Build Function'
+  dependsOn: ValidateFunction
+  condition: not (eq(variables['Build.Reason'], 'PullRequest'))
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  steps:
+    - checkout: self
+      displayName: 'get source from git "Self"'
+
+    # Python version
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.9' 
+
+    # Install requirements
+    - script: |
+        cd "$(Build.Repository.Name)/$(FUNCTION_PATH)"
+        python -m pip install --upgrade pip setuptools wheel
+        pip install --target=".python_packages/lib/site-packages" -r requirements.txt
+      displayName: 'Install tools'
+
+    # Create side Artefact for tests, requirements, etc.
+    - task: ArchiveFiles@2
+      displayName: Archive tests folder
+      inputs:
+        rootFolderOrFile: '$(Build.Repository.Name)/$(FUNCTION_PATH)/tests/'
+        includeRootFolder: true
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/App/service-tests.zip'
+        replaceExistingArchive: true
+        verbose: true
+
+    - task: ArchiveFiles@2
+      displayName: Archive requirements.txt
+      inputs:
+        rootFolderOrFile: '$(Build.Repository.Name)/$(FUNCTION_PATH)/requirements.txt'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/App/service-requirements.zip'
+        replaceExistingArchive: true
+        verbose: true
+
+    - task: ArchiveFiles@2
+      displayName: Archive requirements-dev.txt
+      inputs:
+        rootFolderOrFile: '$(Build.Repository.Name)/$(FUNCTION_PATH)/requirements-dev.txt'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/App/service-requirements-dev.zip'
+        replaceExistingArchive: true
+        verbose: true
+
+    - task: ArchiveFiles@2
+      displayName: Archive .flake8
+      inputs:
+        rootFolderOrFile: '$(Build.Repository.Name)/$(FUNCTION_PATH)/.flake8'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/App/service-flake8.zip'
+        replaceExistingArchive: true
+        verbose: true
+
+    # Create Artefact with functionnal code
+    - task: DeleteFiles@1
+      displayName: 'Clean sources'
+      inputs:
+        contents: |
+          ./tests
+          .gitignore
+          requirements*
+          .flake8
+          .funcignore
+          pytest*
+
+    - task: ArchiveFiles@2
+      displayName: Archive application folder
+      inputs:
+        rootFolderOrFile: '$(Build.Repository.Name)/$(FUNCTION_PATH)/'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/App/service.zip'
+        replaceExistingArchive: false
+        verbose: true
+
+
+    # Publish des artefacts
+    - task: PublishBuildArtifacts@1
+      displayName: PublishArtifact
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: '$(FUNCTION_NAME)'
+        publishLocation: 'Container'

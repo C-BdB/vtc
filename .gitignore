@@ -1,0 +1,7 @@
+app/functions/.venv/*
+app/functions/.funcignore
+.vscode/*
+__azurite**
+__blobstorage**
+__queuestorage**
+**/__pycache__/**
